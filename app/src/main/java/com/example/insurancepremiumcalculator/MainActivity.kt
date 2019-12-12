@@ -8,14 +8,20 @@ import android.widget.CheckBox
 import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var myData: DataModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    myData = ViewModelProviders.of(this).get(DataModel::class.java)
 
+        if(myData.total!=null){
+            result.text="RM %s".format(myData.total.toString())
+        }
         buttonCalculate.setOnClickListener() {
             try {
                 val age: String = spinnerAge.getSelectedItem().toString()
@@ -74,7 +80,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 val grand : Int = calculate (total, extra)
+                myData.total=grand
                 result.text = "RM %d".format(grand)
+
+
             } catch (e: Exception) {
                 val toast: Toast = Toast.makeText(
                     applicationContext,
@@ -91,6 +100,7 @@ class MainActivity : AppCompatActivity() {
             radioGroupGender.clearCheck()
             checkBoxSmoker.setChecked(false)
             result.text =""
+            myData.total=0
         }
     }
     private fun calculate(total:Int,extra:Int):Int{
